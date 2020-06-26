@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+
+{% load static %}
+
+
+<div class="container mt-5 mb-5">
+<div class="row">
+<div class="col-md-6">
+<img src="{{moviedetail.image.url}}" alt="" class="card-img-top hoverable">
+
+</div>
+<div class="col-md-6">
+{% if moviedetail.highrated %}
+
+<span class="badge green mr-1" style="background-color:green; color:white; ">HIGH RATED</span>
+{% endif %}
+{% if moviedetail.new %}
+
+<span class="badge green mr-1" style="background-color:blue; color:white; ">NEW</span>
+{% endif %}
+{% if moviedetail.mostwatch %}
+
+<span class="badge green mr-1" style="background-color:red; color:white; ">MOST WATCH</span>
+{% endif %}
+<h1>{{moviedetail}} ({{moviedetail.year}})</h1>
+
+<a href="{{ moviedetail.torrent.url }}"  class="btn btn-primary btn-md"><h3>
+download movie torrent</h3></a> 
+<hr>
+
+<h2>{{moviedetail.description}}</h2><hr>
+<h5>added by</h5>
+{% if  user.username == moviedetail.user.username %}
+<a href="{% url 'torrentapp:profile' moviedetail.user.username %}"><h3>{{moviedetail.user.username}}</h3></a>
+{% else %}
+<h3>{{moviedetail.user.username}}</h3>
+{% endif %}
+<hr><p>{{moviedetail.date}}</p>
+
+{% comment %}
+<h4>{{moviedetail.prdcategory}}</h4>
+<h4>{{moviedetail.prdbrand}}</h4>
+<h4>price <br>
+{% if moviedetail.discount > 0 %}
+<del>{{moviedetail.price}}</del><br>{{moviedetail.discount}}
+{% else %}
+{{moviedetail.price}}
+{% endif %}
+</h4> good will hunting good will hunti
+<p>item variant</p>
+<form action="">
+<div class="form-group">
+<input type="value" class="form-control" id="exampleInputEmail" aria-describedby="emailhelp" placeholder="1">
+</div>
+<button type="submit" class="btn btn-primary" > Add to cart</button>
+</form>{% endcomment %}
+
+</div>
+</div>
+
+<div class="row">
+
+</div>
+</div>
+{% comment "" %}
+
+<div class="container mt-5 mb-5">
+<h1>leave your review</h1>
+<form>
+   <div class="form-group">
+    <label for="exampleFormControlTextarea1">Enter your review</label>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+  </div>
+  <div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+  <label class="form-check-label" for="inlineRadio1">1</label>
+</div>
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+  <label class="form-check-label" for="inlineRadio2">2</label>
+</div>
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3">
+  <label class="form-check-label" for="inlineRadio3">3</label>
+</div>
+
+  <div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+  <label class="form-check-label" for="inlineRadio1">4</label>
+</div>
+  <div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+  <label class="form-check-label" for="inlineRadio1">5</label>
+</div>
+  <button type="submit" class="btn btn-primary">add review</button>
+</form>
+</div>
+{% endcomment %}
+
+
+
+{% endblock %}
