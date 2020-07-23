@@ -30,8 +30,26 @@
 
 <a href="{{ moviedetail.torrent.url }}"  class="btn btn-primary btn-md"><h3>
 download movie torrent</h3></a> 
-<hr>
+<hr><br>
 
+
+<form action="{% url 'torrentapp:like_movie' moviedetail.slug %}" method="POST">
+{% csrf_token %}
+ {% if user.is_authenticated %}
+
+{% if liked %}
+<button type="submit" name="movie_id" value="{{ moviedetail.id }}" class="btn btn-danger btn-sm" >Unike</button>
+{% else %}
+<button type="submit" name="movie_id" value="{{ moviedetail.id }}" class="btn btn-primary btn-sm" >Like</button>
+{% endif %}
+{% else %}
+<small>must be logged in</small>
+{% endif %}
+
+-{{total_likes}} Likes
+</form>
+<hr>
+<br>
 <h2>{{moviedetail.description}}</h2><hr>
 <h5>added by</h5>
 {% if  user.username == moviedetail.user.username %}
@@ -62,7 +80,24 @@ download movie torrent</h3></a>
 </div>
 </div>
 
-<div class="row">
+<div class="container">
+<h1>Comment...</h1><br>
+{% if not moviedetail.comments.all %}
+
+<h4>No comments yet..<br> <a href="{% url 'torrentapp:addcomment' moviedetail.id %}">add one</a> </h4>
+{% else %}
+<h4>No comments yet..<br> <a href="{% url 'torrentapp:addcomment' moviedetail.id %}">add one</a> </h4>
+<br>
+{% for comment in moviedetail.comments.all %}
+<strong>
+{{comment.name}}</strong><br>
+<p>{{ comment.date }}</p>
+<h3>{{comment.body}}</h3>
+
+
+{% endfor %}
+{% endif %}
+
 
 </div>
 </div>

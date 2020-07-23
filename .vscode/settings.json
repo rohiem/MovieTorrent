@@ -1,6 +1,6 @@
 {
   "start": "set HTTPS=true&&react-scripts start",
-  "python.pythonPath": "C:\\Users\\rohie\\envs\\django3\\Scripts\\python.exe",
+  "python.pythonPath": "C:\\Users\\rohie\\envs\\myproject\\Scripts\\python.exe",
   "emmet.includeLanguages": {
     "django-html": "html"
   },

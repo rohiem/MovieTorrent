@@ -3,7 +3,6 @@
 {% block content %}
 <br><br><br>
 {% comment %}
-    
 <div class="container">
 <form method="POST">
 {% csrf_token %}
@@ -20,7 +19,8 @@
       <button type="submit" class="btn btn-primary btn-md">Upload</button>
     </form>
 </div>
-</div></div>{% comment %}
+</div></div>
+{% comment %}
     <ul>
     {% for document in documents %}
         <li>
@@ -29,6 +29,6 @@
         </li>
     {% endfor %}
     </ul>
-</div>    {% endcomment %}
+</div>{% endcomment %}
 
 {% endblock content %}

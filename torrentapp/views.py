@@ -1,18 +1,27 @@
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import ListView, DetailView, View
 from django.utils.decorators import method_decorator
-from .models import Movie, UserProfile
+from .models import Movie, UserProfile ,Comment
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from .forms import movieform
+from .forms import movieform,CommentForm
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden,HttpResponseRedirect
 from .filters import MovieFilter
 # Create your views here.
-
+def LikeView(request,slug):
+    movie=get_object_or_404(Movie,id=request.POST.get("movie_id"))
+    liked=False
+    if movie.likes.filter(id=request.user.id).exists():
+        movie.likes.remove(request.user)
+        liked=False
+    else:
+        movie.likes.add(request.user)
+        liked=True
+    return HttpResponseRedirect(reverse("torrentapp:detail",args=[str(slug)]))
 
 class homeview(ListView):
     model = Movie
@@ -85,16 +94,28 @@ def home(request):
     mostmovie = Movie.objects.filter(mostwatch=True)[::-1][:4]
     highmovie = Movie.objects.filter(highrated=True)[::-1][:4]
     view = Movie.objects.all()[::-1][:8]
+    item_name=request.GET.get("item")
+    if item_name != "" and item_name is not None:
+        view=  Movie.objects.filter(name__icontains=item_name) 
     context = {"newmovie": newmovie,
                "mostmovie": mostmovie,
                "highmovie": highmovie,
-               "view": view}
+               "view": view,}
     return render(request, 'homeface.html', context)
 
 
 def moviedetail(request, slug):
     moviedetail = get_object_or_404(Movie, slug=slug)
-    context = {'moviedetail': moviedetail}
+    total_likes=moviedetail.total_likes()
+    liked=False
+    if moviedetail.likes.filter(id=request.user.id).exists():
+        liked=True
+
+    context = {
+        'moviedetail': moviedetail
+        ,"total_likes":total_likes,
+        "liked":liked
+        }
     return render(request, 'moviedetail.html', context)
 
 
@@ -233,3 +254,15 @@ class ProfileCreateView(LoginRequiredMixin, UpdateView):
         context = super().get_context_data(**kwargs)
         context['documents'] = UserProfile.objects.all()
         return context
+
+class AddCommentView(LoginRequiredMixin,CreateView):
+    model= Comment
+    form_class=CommentForm
+    template_name="add_comment.html"
+#    fields='__all__'
+#    fields=("name","body")
+    success_url = "/"
+    def form_valid(self, form):
+        form.instance.movie_id = self.kwargs["pk"]
+        return super(AddCommentView, self).form_valid(form)
+    

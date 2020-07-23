@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Movie, Cat, UserProfile
+from .models import Movie, Cat, UserProfile,Comment
 # Register your models here.
 
 
@@ -12,3 +12,4 @@ admin.site.register(Movie
                     )
 admin.site.register(Cat)
 admin.site.register(UserProfile)
+admin.site.register(Comment)

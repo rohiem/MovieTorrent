@@ -77,8 +77,7 @@ class Movie(models.Model):
         choices=MOVIE_CHOICES,
         default=ACTION,
     )
-    user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                             on_delete=models.DO_NOTHING, default=1)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING, default=1)
     name = models.CharField(max_length=100)
     year = models.IntegerField()
     torrent = models.FileField(upload_to="torrent", max_length=100)
@@ -90,6 +89,10 @@ class Movie(models.Model):
     highrated = models.BooleanField(default=False)
     slug = models.SlugField(blank=True, null=True)
 #    cat = models.ForeignKey(Cat, on_delete=models.CASCADE, default=None)
+    likes=models.ManyToManyField(settings.AUTH_USER_MODEL,related_name="movies")
+
+    def total_likes(self):
+        return self.likes.count()
 
     def desc(self):
         return self.description[:50]
@@ -101,6 +104,18 @@ class Movie(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Comment(models.Model):
+    movie = models.ForeignKey(Movie,related_name="comments" ,on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    body = models.TextField(max_length=2000)
+    date = models.DateTimeField(auto_now_add=True)
+    
+
+    def __str__(self):
+        return str(self.name)
+    
 
 
 #    def doc_name(self):
