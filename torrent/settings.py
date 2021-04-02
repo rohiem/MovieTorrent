@@ -39,15 +39,16 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'torrentapp',
     'allauth',
-    'upload',
     'allauth.account',
     'allauth.socialaccount',
     'django.contrib.sites',
     'django_filters',
     #    'bootstrapform',
     'crispy_forms',
+    'rest_framework',
 
-    #    'allauth.socialaccount.providers.google',
+    #    'allauth.socialaccount.providers.google'
+    'django_social_share',
     'allauth.socialaccount.providers.facebook',
     #    'allauth.socialaccount.providers.twitter',
 ]
@@ -120,8 +121,13 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-
-
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 8,
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ]
+}
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 
@@ -174,8 +180,8 @@ AUTHENTICATION_BACKENDS = (
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
-# ACCOUNT_EMAIL_VERIFICATION = 'none'
+# ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_USERNAME_REQUIRED = True
 SITE_ID = 1
 LOGIN_REDIRECT_URL = '/'

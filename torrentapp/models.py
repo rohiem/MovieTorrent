@@ -2,25 +2,11 @@ from django.db import models
 from django.conf import settings
 from django.utils.text import slugify
 from django.db.models.signals import post_save
-
+from django.urls import reverse
+import uuid
+from django.db.utils import IntegrityError
+import random
 # Create your models here.
-
-'''
-class CurrentUserField(models.ForeignKey):
-    def __init__(self, **kwargs):
-        super(CurrentUserField, self).__init__(
-            settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, **kwargs)
-
-    def contribute_to_class(self, cls, name):
-        super(CurrentUserField, self).contribute_to_class(cls, name)
-        registry = registration.FieldRegistry()
-        registry.add_field(cls, self)
-
-
-class ClientDetails(models.Model):
-    created_by = CurrentUserField()
-
-'''
 
 
 class UserProfile(models.Model):
@@ -41,15 +27,6 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.user.username
-
-
-class Cat(models.Model):
-    name = models.CharField(max_length=50)
-    desc = models.TextField(max_length=500)
-
-    def __str__(self):
-        return self.name
-
 
 class Movie(models.Model):
     ACTION = 'AC'
@@ -77,7 +54,8 @@ class Movie(models.Model):
         choices=MOVIE_CHOICES,
         default=ACTION,
     )
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING, default=1)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.DO_NOTHING, default=1)
     name = models.CharField(max_length=100)
     year = models.IntegerField()
     torrent = models.FileField(upload_to="torrent", max_length=100)
@@ -87,9 +65,9 @@ class Movie(models.Model):
     new = models.BooleanField(default=False)
     mostwatch = models.BooleanField(default=False)
     highrated = models.BooleanField(default=False)
-    slug = models.SlugField(blank=True, null=True)
-#    cat = models.ForeignKey(Cat, on_delete=models.CASCADE, default=None)
-    likes=models.ManyToManyField(settings.AUTH_USER_MODEL,related_name="movies")
+    slug = models.SlugField(blank=False, null=False, unique=True )
+    likes = models.ManyToManyField(
+        settings.AUTH_USER_MODEL, related_name="movies",blank=True)
 
     def total_likes(self):
         return self.likes.count()
@@ -99,27 +77,31 @@ class Movie(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.name)
+            slugname=slugify(self.name)
+            slugyear=slugify(self.year)
+            r2 = random.randint(1,10000**10)
+            self.slug = slugname+"-"+slugyear+"-"+str(r2)
         super(Movie, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.name
-
+    
+    def get_absolute_url(self):
+        return reverse("torrentapp:detail", kwargs={"slug": self.slug})
+    
 
 class Comment(models.Model):
-    movie = models.ForeignKey(Movie,related_name="comments" ,on_delete=models.CASCADE)
-    name = models.CharField(max_length=100)
+    movie = models.ForeignKey(
+        Movie, related_name="comments", on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE, default=1)
     body = models.TextField(max_length=2000)
     date = models.DateTimeField(auto_now_add=True)
-    
 
     def __str__(self):
-        return str(self.name)
-    
+        return str(self.user.username)
 
 
-#    def doc_name(self):
-#        return self.torrent.name.split('/')[-1]
 
 
 def userprofile_receiver(sender, instance, created, *args, **kwargs):

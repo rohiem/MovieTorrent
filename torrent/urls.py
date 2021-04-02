@@ -21,7 +21,7 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include("torrentapp.urls")),
-    path('files/', include("upload.urls")),
+    path('api/', include("torrentapp.api.urls")),
     path('accounts/', include("allauth.urls")),
 
 ]

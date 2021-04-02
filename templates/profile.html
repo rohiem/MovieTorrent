@@ -43,6 +43,37 @@
  <section class="text-center mb-4">
  <div class="container">
  <br><hr><br>
+ <h1>MY FAVOURITE MOVIES</h1>
+ <br><hr><br>
+        <div class="row wow fadeIn">
+
+{% for m in favourite %}
+
+          <div class="col-lg-3 col-md-6 mb-4">
+
+            <div class="card">
+
+              <div class="view overlay">
+                <img src="{{ m.image.url }}" class="card-img-top"style="height:380px;" >
+        
+              </div>
+
+              <div class="card-body text-center">
+                                  <a href="{% url 'torrentapp:detail' m.slug %}" class="dark-grey-text"><h6>{{ m }}</h6>    </a>
+
+            </div>
+
+            </div>
+
+          </div>
+          {% endfor %}
+        </div>
+</div>
+      </section>
+    
+ <section class="text-center mb-4">
+ <div class="container">
+ <br><hr><br>
  <h1>MOVIES I ADDED</h1>
  <br><hr><br>
         <div class="row wow fadeIn">
@@ -70,7 +101,6 @@
         </div>
 </div>
       </section>
-
 
 {% endblock %}
 
