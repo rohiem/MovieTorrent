@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import ListView, DetailView, View
 from django.utils.decorators import method_decorator
-from .models import Movie, UserProfile, Comment
+from .models import Movie, UserProfile, Comment,Rating
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from .forms import movieform, CommentForm
@@ -19,6 +19,7 @@ from django.core import serializers
 import json
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
+
 
 
 def LikeView(request, slug):
@@ -131,12 +132,19 @@ def moviedetail(request, slug):
     liked = False
     if moviedetail.likes.filter(id=request.user.id).exists():
         liked = True
+    
     context = {
         'moviedetail': moviedetail,
          "total_likes": total_likes,
         "liked": liked,
         "form":CommentForm(request.POST or None)
     }
+    try:   
+        rating=Rating.objects.get(movie=moviedetail,user=request.user)
+        context.update({ 'rating':rating})
+    except Rating.DoesNotExist:
+        pass
+
     return render(request, 'moviedetail.html', context)
 
 
@@ -234,3 +242,18 @@ def movie_search_filter_json(request):
     f = MovieFilter(request.GET, queryset=Movie.objects.all())
     data=[{"image": x.image.url, "name": x.name,"year":x.year,"url":x.get_absolute_url() ,"desc":x.desc()}for x in f.qs]
     return JsonResponse(data[::-1],safe=False)
+@login_required
+@require_POST
+def rate_movie(request,id):
+    movie=get_object_or_404(Movie,id=id)
+    user=request.user
+    stars=request.POST["stars"]
+    try:
+        rating=Rating.objects.get(movie=movie,user=user)
+        rating.stars=stars
+        rating.save()
+    except:
+        rating=Rating(movie=movie,user=user,stars=stars)
+        rating.save()
+    return JsonResponse({"stars":rating.stars})
+

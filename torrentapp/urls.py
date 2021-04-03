@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.urls import path, include
 from .views import( homeview, moviedetail, profile, home, UploadView, ProfileCreateView,
- browse,LikeView,AddCommentView,LikeApiView,LikeJsonView,CommentJsonView,searchJson,movie_search_filter_json)
+ browse,LikeView,AddCommentView,LikeApiView,LikeJsonView,CommentJsonView,searchJson,movie_search_filter_json,rate_movie)
 # , MovieAdd
 # , Profileview
 
@@ -21,4 +21,5 @@ urlpatterns = [
     path('like/<slug:slug>',LikeView,name="like_movie"),
     path('likejson/',LikeJsonView,name="like_json_movie"),
     path('likeapi/<slug:slug>',LikeApiView.as_view(),name="like_api_movie"),
+    path('ratemovie/<int:id>',rate_movie,name="ratemovie"),
 ]

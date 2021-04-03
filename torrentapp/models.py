@@ -3,7 +3,7 @@ from django.conf import settings
 from django.utils.text import slugify
 from django.db.models.signals import post_save
 from django.urls import reverse
-import uuid
+from django.core.validators import MinValueValidator,MaxValueValidator
 from django.db.utils import IntegrityError
 import random
 # Create your models here.
@@ -101,6 +101,13 @@ class Comment(models.Model):
     def __str__(self):
         return str(self.user.username)
 
+class Rating(models.Model):
+    movie = models.ForeignKey(Movie,  on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
+    stars=models.PositiveIntegerField(validators=[MinValueValidator(1),MaxValueValidator(5),])
+    def __str__(self):
+        return self.user.username +" rated "+self.movie.name+" "+str(self.stars)
+    
 
 
 
