@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.urls import path, include
 from .views import( homeview, moviedetail, profile, home, UploadView, ProfileCreateView,
- browse,LikeView,AddCommentView,LikeApiView,LikeJsonView,CommentJsonView,searchJson,movie_search_filter_json,rate_movie)
+ browse,LikeView,AddCommentView,LikeApiView,LikeJsonView,CommentJsonView,searchJson,movie_search_filter_json,rate_movie,)
 # , MovieAdd
 # , Profileview
 

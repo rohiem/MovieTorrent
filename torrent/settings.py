@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+from django.urls import reverse
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -46,11 +47,21 @@ INSTALLED_APPS = [
     #    'bootstrapform',
     'crispy_forms',
     'rest_framework',
+    'rest_framework.authtoken',
+
 
     #    'allauth.socialaccount.providers.google'
     'django_social_share',
     'allauth.socialaccount.providers.facebook',
+    'allauth.socialaccount.providers.google',
+
     #    'allauth.socialaccount.providers.twitter',
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
+
+    "corsheaders",
+
+
 ]
 # SOCIALACCOUNT_PROVIDERS = {'facebook': {}, 'google': {}, 'twitter': {}}
 SOCIALACCOUNT_PROVIDERS = {
@@ -82,6 +93,8 @@ SOCIALACCOUNT_PROVIDERS = {
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
+    
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -96,7 +109,7 @@ ROOT_URLCONF = 'torrent.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['templates'],
+        'DIRS': ['templates',os.path.join(BASE_DIR,"react/torent-react/build")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -125,7 +138,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 8,
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
     ]
 }
 # Password validation
@@ -168,7 +181,7 @@ USE_TZ = True
 
 # Auth
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'),os.path.join(BASE_DIR,"react/torent-react/build/static")]
 STATIC_ROOT = os.path.join(BASE_DIR, 'static_root')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -188,3 +201,52 @@ LOGIN_REDIRECT_URL = '/'
 # facebook
 SOCIAL_AUTH_FACEBOOK_KEY = "2415710988726197"  # App ID
 SOCIAL_AUTH_FACEBOOK_SECRET = "93d04b3acda16485774edb07d848967c"  # app key
+
+
+CORS_ALLOW_ALL_ORIGINS= True
+CORS_ORIGIN_ALLOW_ALL = True # If this is used then `CORS_ORIGIN_WHITELIST` will not have any effect
+CORS_ALLOW_CREDENTIALS = True
+
+
+REST_USE_JWT = True
+JWT_AUTH_COOKIE = 'auth'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+ 
+        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
+    ),
+}
+
+
+from datetime import timedelta
+
+...
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=30),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'UPDATE_LAST_LOGIN': False,
+
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'VERIFYING_KEY': None,
+    'AUDIENCE': None,
+    'ISSUER': None,
+
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'TOKEN_TYPE_CLAIM': 'token_type',
+
+    'JTI_CLAIM': 'jti',
+
+    'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
+    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
+    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
+}

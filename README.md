@@ -1,7 +1,4 @@
-pip# Django Project Boilerplate
-
-This repository is a boilerplate Django project for quickly getting started.
-
+pip# Django Project
 
 ## Getting started
 
@@ -13,6 +10,6 @@ Steps:
 
 This project includes:
 
-1. Settings modules for deploying with Azure
-2. Django commands for renaming your project and creating a superuser
-3. A cli tool for setting environment variables for deployment
+1. Crud-operation with class based views
+2. like button with comments and rating by stars
+3. using JQuery , Ajax,mdBootstrap ,allauth

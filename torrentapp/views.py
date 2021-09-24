@@ -19,6 +19,13 @@ from django.core import serializers
 import json
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
+from allauth.account.views import SignupView as AllAuthSignupView
+'''
+class MySignupView(AllAuthSignupView):
+    def get_success_url(self):
+        return reverse("torrentapp:createprofile" ,kwargs={"slug":str(self.request.user.username)})
+'''
+
 
 
 
@@ -255,5 +262,6 @@ def rate_movie(request,id):
     except:
         rating=Rating(movie=movie,user=user,stars=stars)
         rating.save()
-    return JsonResponse({"stars":rating.stars})
-
+    data={"stars":rating.stars,"nom":movie.no_of_rating(),"avg":round(float(movie.avg_of_rating()),1)}
+    return JsonResponse(data)
+ 

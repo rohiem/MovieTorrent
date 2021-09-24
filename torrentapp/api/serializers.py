@@ -1,13 +1,33 @@
-from rest_framework.serializers import ModelSerializer,SerializerMethodField,HyperlinkedIdentityField
-from torrentapp.models import Movie,Comment
+from rest_framework.serializers import ModelSerializer,SerializerMethodField,HyperlinkedIdentityField,ImageField
+from torrentapp.models import Movie,Comment,Rating,UserProfile
 from rest_framework.fields import CurrentUserDefault, HiddenField
+from django.conf import settings
+from django.contrib.auth import get_user_model
+
+
+
+
+class CommentSerializer(ModelSerializer):
+    user=SerializerMethodField()
+
+    class Meta:
+        model=Comment
+        fields='__all__'
+    
+    def get_user(self,obj):
+        return obj.user.username
 
 class MovieSerializer(ModelSerializer):
     user=SerializerMethodField()
-    url_delete_update = HyperlinkedIdentityField(view_name='api:update',lookup_field="slug")
+ #   url_delete_update = HyperlinkedIdentityField(view_name='api:update',lookup_field="slug")
+    image = ImageField(max_length=None, use_url=True, required=True)
+    comments=SerializerMethodField()
+    likes=SerializerMethodField()
+    likes_count=SerializerMethodField()
     class Meta:
         model=Movie
-        fields=("url_delete_update","id",
+        fields=(#"url_delete_update",
+        "id",
     "category",
     "name",
     "year",
@@ -20,21 +40,40 @@ class MovieSerializer(ModelSerializer):
     "highrated",
     "slug",
     "user",
-    "likes")
+    "likes",
+    "comments",
+    "likes_count","no_of_rating","avg_of_rating")
 
-
+    def get_likes_count(self,obj):
+        return obj.total_likes()
+    def get_no_of_rating(self,obj):
+        return obj.no_of_rating()
+    def get_avg_of_rating(self,obj):
+        return obj.avg_of_rating()
     def get_user(self,obj):
         return obj.user.username
+    def get_likes(self,obj):
+        li=[]
+        for i in obj.likes.all():
+            li.append(i.username)
+        return li
+
+    def get_comments(self,obj):
+        comments= obj.comments.all()  
+        serializer=CommentSerializer(comments,many=True)
+        return serializer.data  
 
 class MovieListSerializer(ModelSerializer):
-    detail_url = HyperlinkedIdentityField(view_name='api:detail',lookup_field="slug")
+   # detail_url = HyperlinkedIdentityField(view_name='api:detail',lookup_field="slug")
     user=SerializerMethodField()
+    image = ImageField(max_length=None, use_url=True, required=True)
 
     class Meta:
         model=Movie
          
-        fields=("name",
-        "category",
+        fields=("id",
+            "name",
+            "category",
             "year",
             "torrent",
             "description",
@@ -43,7 +82,8 @@ class MovieListSerializer(ModelSerializer):
             "mostwatch",
             "highrated",
             "user",
-            "detail_url",)
+          #  "detail_url",
+          )
     def get_user(self,obj):
         return obj.user.username
 
@@ -57,3 +97,33 @@ class CommentSerializer(ModelSerializer):
     
     def get_user(self,obj):
         return obj.user.username
+
+
+class RatingSerializer(ModelSerializer):
+    user=SerializerMethodField()
+
+    class Meta:
+        model=Rating
+        fields='__all__'
+    
+    def get_user(self,obj):
+        return obj.user.username
+
+
+
+
+
+class UserProfileSerializer(ModelSerializer):
+
+    movies=MovieListSerializer(many=True)
+    class Meta:
+        model=UserProfile
+        fields=("id",
+            "first",
+            "last",
+            "bio",
+            "picture",
+            "movies",
+            "slug")
+    
+
