@@ -7,7 +7,7 @@ from .views import( homeview, moviedetail, profile, home, UploadView, ProfileCre
 
 app_name = 'torrentapp'
 urlpatterns = [
-    path('', home, name="homeface"),
+    path('home', home, name="homeface"),
     path('searchJson', searchJson, name="searchJson"),
     path('searchfilterjson', movie_search_filter_json, name="searchfilterjson"),
     path('movies', homeview.as_view(), name="home"),

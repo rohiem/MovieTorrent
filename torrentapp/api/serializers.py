@@ -4,6 +4,7 @@ from rest_framework.fields import CurrentUserDefault, HiddenField
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
+from rest_framework import serializers    
 
 
 
@@ -82,6 +83,7 @@ class MovieListSerializer(ModelSerializer):
             "mostwatch",
             "highrated",
             "user",
+            "slug"
           #  "detail_url",
           )
     def get_user(self,obj):
@@ -90,6 +92,7 @@ class MovieListSerializer(ModelSerializer):
 
 class CommentSerializer(ModelSerializer):
     user=SerializerMethodField()
+    image=SerializerMethodField()
 
     class Meta:
         model=Comment
@@ -97,6 +100,8 @@ class CommentSerializer(ModelSerializer):
     
     def get_user(self,obj):
         return obj.user.username
+    def get_image(self,obj):
+        return obj.user.userprofile.picture.url
 
 
 class RatingSerializer(ModelSerializer):
@@ -116,6 +121,7 @@ class RatingSerializer(ModelSerializer):
 class UserProfileSerializer(ModelSerializer):
 
     movies=MovieListSerializer(many=True)
+    movieCreated=SerializerMethodField()
     class Meta:
         model=UserProfile
         fields=("id",
@@ -124,6 +130,12 @@ class UserProfileSerializer(ModelSerializer):
             "bio",
             "picture",
             "movies",
-            "slug")
+            "slug","movieCreated")
+    def get_movieCreated(self,obj):
+        movie =obj.user.movie_set.all()[::-1]
+        serializer=MovieSerializer(movie,many=True)
+        return serializer.data
+
+
     
 

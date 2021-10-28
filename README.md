@@ -11,5 +11,12 @@ Steps:
 This project includes:
 
 1. Crud-operation with class based views
-2. like button with comments and rating by stars
+2. like button with comments and rating by stars,django filters search,instant search
 3. using JQuery , Ajax,mdBootstrap ,allauth
+
+UPDAATE
+
+1. I updated this project to react/redux
+2. built the APIs for all the views
+3. also ,pagination,like button with comments and rating by stars
+4. search with django filters APIs integrated with react and instant search

@@ -10,6 +10,10 @@ import {
   USER_PROFILE_SUCCESS,
   USER_PROFILE_FAIL,
   USER_PROFILE_RESET,
+  USER_PROFILE_CREATE_REQUEST,
+  USER_PROFILE_CREATE_SUCCESS,
+  USER_PROFILE_CREATE_FAIL,
+  USER_PROFILE_CREATE_RESET,
 } from "../constants/userConstants";
 export const userRegisterReducers = (state = {}, action) => {
   switch (action.type) {
@@ -46,11 +50,26 @@ export const userProfileReducers = (state = { user: {} }, action) => {
     case USER_PROFILE_REQUEST:
       return { ...state, loading: true };
     case USER_PROFILE_SUCCESS:
-      return { loading: false, success: true, user: action.payload };
+      return { loading: false, user: action.payload };
     case USER_PROFILE_FAIL:
       return { loading: false, error: action.payload };
     case USER_PROFILE_RESET:
       return { user: {} };
+    default:
+      return state;
+  }
+};
+
+export const userProfileCreateReducers = (state = { profile: {} }, action) => {
+  switch (action.type) {
+    case USER_PROFILE_CREATE_REQUEST:
+      return { ...state, loading: true };
+    case USER_PROFILE_CREATE_SUCCESS:
+      return { loading: false, success: true, profile: action.payload };
+    case USER_PROFILE_CREATE_FAIL:
+      return { loading: false, error: action.payload };
+    case USER_PROFILE_CREATE_RESET:
+      return { profile: {} };
     default:
       return state;
   }

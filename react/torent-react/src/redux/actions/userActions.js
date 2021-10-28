@@ -10,6 +10,9 @@ import {
   USER_PROFILE_SUCCESS,
   USER_PROFILE_FAIL,
   USER_PROFILE_RESET,
+  USER_PROFILE_CREATE_REQUEST,
+  USER_PROFILE_CREATE_SUCCESS,
+  USER_PROFILE_CREATE_FAIL,
 } from "../constants/userConstants";
 import axios from "axios";
 export const register =
@@ -121,6 +124,49 @@ export const getUserProfile = () => async (dispatch, getState) => {
   } catch (error) {
     dispatch({
       type: USER_PROFILE_FAIL,
+      payload:
+        error.response && error.response.data.detail
+          ? error.response.data.detail
+          : error.message,
+    });
+  }
+};
+
+export const createUserProfile = (profile) => async (dispatch, getState) => {
+  const {
+    userLogin: { userInfo },
+  } = getState();
+  try {
+    dispatch({ type: USER_PROFILE_CREATE_REQUEST });
+
+    const config = {
+      headers: {
+        "content-type": "multipart/form-data",
+        Authorization: `Bearer ${userInfo.access_token}`,
+      },
+    };
+
+    const formData = new FormData();
+    const { first, last, image: picture, bio } = profile;
+    console.log(picture);
+    formData.append("first", first);
+    formData.append("last", last);
+    formData.append("picture", picture);
+    formData.append("bio", bio);
+
+    const { data } = await axios.put(
+      "/api/user/createprofile",
+      formData,
+      config
+    );
+
+    dispatch({
+      type: USER_PROFILE_CREATE_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: USER_PROFILE_CREATE_FAIL,
       payload:
         error.response && error.response.data.detail
           ? error.response.data.detail
