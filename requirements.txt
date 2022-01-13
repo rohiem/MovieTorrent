@@ -79,7 +79,7 @@ path.py==12.4.0
 pdfkit==0.6.1
 pep8==1.7.1
 pickleshare==0.7.5
-Pillow==7.1.2
+Pillow==9.0.0
 pluggy==0.13.1
 Pmw==2.0.2
 preppy==3.0.2
