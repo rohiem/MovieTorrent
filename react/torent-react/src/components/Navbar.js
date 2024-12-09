@@ -62,7 +62,8 @@ function NavBar() {
                 <>
                   <Nav.Link className="ml-auto">
                     {" "}
-                    <Link to="/profile">{userInfo.user.username} </Link>
+                    {/*                     <Link to="/profile">{userInfo.user.username} </Link>
+                     */}{" "}
                   </Nav.Link>
                   <Button
                     className="btn btn-info btn-sm waves-effect waves-light float-left"

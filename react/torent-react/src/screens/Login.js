@@ -52,7 +52,7 @@ function Login(props) {
             ></Form.Control>
           </Form.Group>
           <Button variant="primary" type="submit">
-            Create
+            login
           </Button>
           Not a user
           <Link to="/register" onClick={() => props.onHide()}>

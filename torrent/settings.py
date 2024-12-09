@@ -26,7 +26,7 @@ SECRET_KEY = '%=xrfggal$#0m)45*zeoiu809lw8*r&fe&wc0m^+uoq4m4*4(i'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -45,11 +45,12 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django_filters',
     #    'bootstrapform',
+    'crispy_bootstrap4',
     'crispy_forms',
     'rest_framework',
     'rest_framework.authtoken',
 
-
+'django_celery_results',
     #    'allauth.socialaccount.providers.google'
     'django_social_share',
     'allauth.socialaccount.providers.facebook',
@@ -93,7 +94,7 @@ SOCIALACCOUNT_PROVIDERS = {
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
-    
+    "allauth.account.middleware.AccountMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -109,7 +110,7 @@ ROOT_URLCONF = 'torrent.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['templates',os.path.join(BASE_DIR,"react/torent-react/build")],
+        'DIRS': [os.path.join(BASE_DIR,'templates'),os.path.join(BASE_DIR,"react/torent-react/build")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -127,6 +128,10 @@ WSGI_APPLICATION = 'torrent.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
+#
+
+"""
+
 
 DATABASES = {
     'default': {
@@ -134,6 +139,23 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+"""
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME':  'my_database',
+        'USER': 'postgres',
+        'PASSWORD': '33883246',
+        'HOST': 'postgres',
+        'PORT': '5432',
+    }
+}
+
+
+
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 8,
@@ -181,7 +203,8 @@ USE_TZ = True
 
 # Auth
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'),os.path.join(BASE_DIR,"react/torent-react/build/static")]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'),#os.path.join(BASE_DIR,"react/torent-react/build/static")
+]
 STATIC_ROOT = os.path.join(BASE_DIR, 'static_root')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -250,3 +273,33 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
+CRISPY_TEMPLATE_PACK = 'bootstrap4' 
+
+ACCOUNT_ADAPTER = 'torrentapp.urls.MyAccountAdapter'
+
+
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/1',  # Redis URL
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        },
+        'TIMEOUT': 300,  # Cache timeout in seconds (5 minutes)
+    }
+}
+
+
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+
+
+
+
+# Backend for storing task results (optional, useful for debugging)
+CELERY_RESULT_BACKEND = 'django-db'
+
+# Task serializer and accepted content
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'

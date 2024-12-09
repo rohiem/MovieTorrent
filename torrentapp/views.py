@@ -20,6 +20,10 @@ import json
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from allauth.account.views import SignupView as AllAuthSignupView
+from django.core.cache import cache
+from django.views.decorators.cache import cache_page
+from torrent.tasks import spam_filterAPI#spam_filter,
+
 '''
 class MySignupView(AllAuthSignupView):
     def get_success_url(self):
@@ -102,9 +106,21 @@ class browse(ListView):
             self.request.GET, queryset=self.get_queryset())
         return context
 
+# adding redis 
+#
+#
 
+""" 
+    queryset = cache.get('my_model_queryset')
 
-
+    if not queryset:
+        # If not in the cache, fetch from the database
+        queryset = MyModel.objects.filter(active=True)
+        # Store the result in the cache for future use
+        cache.set('my_model_queryset', queryset, timeout=300)  # Timeout is optional
+ """
+ 
+#@cache_page(60 * 5)  # Cache for 5 minutes
 def home(request):
     newmovie = Movie.objects.filter(new=True)[::-1][:4]
     mostmovie = Movie.objects.filter(mostwatch=True)[::-1][:4]
@@ -133,12 +149,24 @@ def searchJson(request):
     return JsonResponse(data ,safe=False)
 
 
+
+
+# adding redis to cash page
+#
+#
+#@cache_page(60 * 5)  # Cache for 5 minutes
+#
+#
+# 
 def moviedetail(request, slug):
     moviedetail = get_object_or_404(Movie, slug=slug)
     total_likes = moviedetail.total_likes()
     liked = False
-    if moviedetail.likes.filter(id=request.user.id).exists():
-        liked = True
+    try:
+        if moviedetail.likes.filter(id=request.user.id).exists():
+            liked = True
+    except:
+        pass
     
     context = {
         'moviedetail': moviedetail,
@@ -147,18 +175,36 @@ def moviedetail(request, slug):
         "form":CommentForm(request.POST or None)
     }
     try:   
-        rating=Rating.objects.get(movie=moviedetail,user=request.user)
+        rating=Rating.objects.get(movie=moviedetail,user=request.user.id)
         context.update({ 'rating':rating})
     except Rating.DoesNotExist:
         pass
 
     return render(request, 'moviedetail.html', context)
 
-
 @login_required(login_url='accounts/login')
 def profile(request, slug):
     profile = get_object_or_404(UserProfile, slug=slug)
-    favourite=Movie.objects.filter(likes=request.user)
+  #  favourite=Movie.objects.filter(likes=request.user)
+
+#
+# adding redis to cash queryset
+#
+
+
+    favourite = cache.get('my_model_queryset')
+    print("cash:",favourite)
+    if not favourite:
+        favourite=Movie.objects.filter(likes=request.user)
+        print("db")
+        cache.set('my_model_queryset', favourite, timeout=300) 
+
+
+#
+#
+#
+
+
 
     if str(request.user) == str(profile.slug):
         profile = get_object_or_404(UserProfile, slug=slug)
@@ -225,21 +271,67 @@ class AddCommentView(LoginRequiredMixin, CreateView):
     def get_success_url(self):
         movie=Movie.objects.get(id=self.kwargs["pk"])
         return reverse_lazy('torrentapp:detail', kwargs={'slug': movie.slug})
+#
+#
+#
+#ADDING CELERY TASK TO FILTER SPAM BY LIBRARY TO FILTER SPAMS
+#
+#
+#
 
 
+""" 
 
 @login_required(login_url='accounts/login')
 @require_POST
 def CommentJsonView(request,id):
     if request.method == 'POST':
+        #catch the ip address
+        remote_addr = request.META.get('REMOTE_ADDR')
 
         movie = get_object_or_404(Movie, id=id)
         comment=CommentForm(request.POST or None)
         if comment.is_valid():
             comment=Comment(movie=movie,user=request.user,body=request.POST["body"])
             comment.save()
+            # Check spam asynchronously.
+        #task=spam_filter.delay(comment.id)
+        taskAPI=spam_filterAPI.delay(comment.id)
+    import time
+    time.sleep(2)   
 
-    
+    cashed_comment = cache.get('comment')
+    print("cash:",cashed_comment)
+    if not cashed_comment:
+        cashed_comment=comment.body
+        cache.set('comment', cashed_comment, timeout=2) 
+
+
+
+    data={"body":comment.body,"user":comment.user.username,"date":comment.date,"image":comment.user.userprofile.picture.url}
+    return JsonResponse(data)
+ """
+
+
+
+
+
+ 
+
+@login_required(login_url='accounts/login')
+@require_POST
+def CommentJsonView(request,id):
+    if request.method == 'POST':
+        #catch the ip address
+        remote_addr = request.META.get('REMOTE_ADDR')
+
+        movie = get_object_or_404(Movie, id=id)
+        comment=CommentForm(request.POST or None)
+        if comment.is_valid():
+            comment=Comment(movie=movie,user=request.user,body=request.POST["body"])
+            comment.save()
+            # Check spam asynchronously.
+        taskAPI=spam_filterAPI.delay(comment.id)
     data={"body":comment.body,"user":comment.user.username,"date":comment.date,"image":comment.user.userprofile.picture.url}
     return JsonResponse(data)
 
@@ -249,6 +341,14 @@ def movie_search_filter_json(request):
     f = MovieFilter(request.GET, queryset=Movie.objects.all())
     data=[{"image": x.image.url, "name": x.name,"year":x.year,"url":x.get_absolute_url() ,"desc":x.desc()}for x in f.qs]
     return JsonResponse(data[::-1],safe=False)
+
+
+
+
+
+
+
+
 @login_required
 @require_POST
 def rate_movie(request,id):

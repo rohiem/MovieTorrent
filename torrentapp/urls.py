@@ -6,6 +6,13 @@ from .views import( homeview, moviedetail, profile, home, UploadView, ProfileCre
 # , Profileview
 
 app_name = 'torrentapp'
+from allauth.account.adapter import DefaultAccountAdapter
+
+class MyAccountAdapter(DefaultAccountAdapter):
+
+    def get_login_redirect_url(self, request):
+        path = "/profiles/{username}/"
+        return path.format(username=request.user.username)
 urlpatterns = [
     path('home', home, name="homeface"),
     path('searchJson', searchJson, name="searchJson"),
@@ -17,7 +24,7 @@ urlpatterns = [
     path('create', UploadView.as_view(), name="create"),
     path('profiles/<slug:slug>/createprofile', ProfileCreateView.as_view(), name="createprofile"),
     path('movies/<slug:slug>', moviedetail, name="detail"),
-    path('profiles/<slug:slug>', profile, name="profile"),
+    path('profiles/<slug:slug>/', profile, name="profile"),
     path('like/<slug:slug>',LikeView,name="like_movie"),
     path('likejson/',LikeJsonView,name="like_json_movie"),
     path('likeapi/<slug:slug>',LikeApiView.as_view(),name="like_api_movie"),

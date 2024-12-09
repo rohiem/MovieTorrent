@@ -74,13 +74,17 @@ export const login = (email, password) => async (dispatch) => {
       },
       config
     );
+    console.log("success");
+    console.log(JSON.stringify(data));
 
     dispatch({
       type: USER_LOGIN_SUCCESS,
       payload: data,
     });
+    console.log("success dispatch");
 
-    localStorage.setItem("userInfo", JSON.stringify(data));
+    localStorage.setItem("userInfo", data);
+    console.log("success local storage");
   } catch (error) {
     dispatch({
       type: USER_LOGIN_FAIL,

@@ -21,6 +21,8 @@ def unique_slug_generator(model_instane,name,year,slug ):
     return slug
 
 class UserProfile(models.Model):
+    id = models.AutoField(primary_key=True)
+
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default=1)
     first = models.CharField(max_length=50)
@@ -59,6 +61,7 @@ class Movie(models.Model):
         (HORROR, 'Horror'),
 
     ]
+    id = models.AutoField(primary_key=True)
     category = models.CharField(
         max_length=2,
         choices=MOVIE_CHOICES,
@@ -113,18 +116,23 @@ class Movie(models.Model):
         super(Movie, self).save(*args, **kwargs)
 '''
 class Comment(models.Model):
+    id = models.AutoField(primary_key=True)
+
     movie = models.ForeignKey(
         Movie, related_name="comments", on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE, default=1)
     body = models.TextField(max_length=2000)
     date = models.DateTimeField(auto_now_add=True)
+    is_spam=models.BooleanField(default=False)
 
     def __str__(self):
         return str(self.user.username)
 
 
 class Rating(models.Model):
+    id = models.AutoField(primary_key=True)
+
     movie = models.ForeignKey(Movie,  on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
     stars=models.PositiveIntegerField(validators=[MinValueValidator(1),MaxValueValidator(5),])
