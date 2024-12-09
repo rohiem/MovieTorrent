@@ -20,3 +20,11 @@ UPDAATE
 2. built the APIs for all the views
 3. also ,pagination,like button with comments and rating by stars
 4. search with django filters APIs integrated with react and instant search
+
+UPDATE
+
+1. i added CELERY for running background task checking and filtering spam comments
+2. used REDIS all over the app for cashing data and celery depends on it
+3. connected my POSTGRESQL database and moved data to it
+4. connected GUNICORN and NGINX for handling http requests
+5. DOCKERized my django app and celery redis nginx postgresql
