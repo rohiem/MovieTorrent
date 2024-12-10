@@ -7,8 +7,10 @@ while ! nc -z postgres 5432; do
 done
 echo "PostgreSQL is ready!"
 
+
 # Run migrations
 python manage.py migrate
 
 # Start the application
 exec "$@"
+
