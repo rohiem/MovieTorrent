@@ -2,7 +2,7 @@
 FROM python:3.12-slim
 
 # Set environment variables to prevent Python from writing .pyc files
-# and to ensure stdout and stderr are unbuffered (helpful for Docker logs)
+# and to ensure stdout and stderr are unbuffered 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
