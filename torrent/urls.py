@@ -24,7 +24,7 @@ from django.views.generic import TemplateView
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    path('', TemplateView.as_view(template_name="index.html"), name='index'),
+    path('react', TemplateView.as_view(template_name="build/index.html"), name='index'),
 
     path('', include("torrentapp.urls")),
     path('api/', include("torrentapp.api.urls")),

@@ -110,7 +110,8 @@ ROOT_URLCONF = 'torrent.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR,'templates'),os.path.join(BASE_DIR,"react/torent-react/build")],
+        'DIRS': [os.path.join(BASE_DIR,'templates'),
+        os.path.join(BASE_DIR,"react/torent-react/")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -130,7 +131,6 @@ WSGI_APPLICATION = 'torrent.wsgi.application'
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 #
 
-"""
 
 
 DATABASES = {
@@ -153,6 +153,7 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+"""
 
 
 
