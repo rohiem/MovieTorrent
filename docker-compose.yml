@@ -1,4 +1,5 @@
-version: "3"
+version: "3.9"
+
 services:
   web:
     build:
@@ -31,7 +32,14 @@ services:
       - "80:80"
     depends_on:
       - web
-
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile-react
+    ports:
+      - "3000:3000"
+    depends_on:
+      - web
   redis:
     image: redis:latest
     ports:
