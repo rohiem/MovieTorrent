@@ -28,3 +28,7 @@ UPDATE
 3. connected my POSTGRESQL database and moved data to it
 4. connected GUNICORN and NGINX for handling http requests
 5. DOCKERized my django app and celery redis nginx postgresql
+
+TODO:-
+
+- update react dependencies
