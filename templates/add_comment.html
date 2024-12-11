@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<br><br><br>
+
+
+<div class="container"><div class="card">    <div class="card-body px-lg-5 pt-0"><br>
+    <h1>ADD COMMENT</h1>
+    <form method="POST" >
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-primary btn-md">Add comment</button>
+    </form>
+</div>
+</div></div>
+
+{% endblock content %}

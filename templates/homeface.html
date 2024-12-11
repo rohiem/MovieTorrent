@@ -1,0 +1,259 @@
+{% extends 'base.html' %} {% block content %}{% load static %}
+
+<main class="mt-5 pt-5">
+  <div class="container">
+    <!--Section: Jumbotron-->
+    <section
+      class="card wow fadeIn"
+      style="background-image: url({% static 'img/gradient1.jpg'%})"
+    >
+      <!-- Content -->
+      <div class="card-body text-white text-center py-5 px-5 my-5">
+        <h1 class="mb-4">
+          <strong>WELCOME TO TORRENT MAN</strong>
+        </h1>
+        <p>
+          <strong>YOUR SOURCE TO ALL KINDS OF TORRENTS</strong>
+        </p>
+        <p class="mb-4">
+          <strong
+            >The MOST UP-TO-DATE SOURCE OF ANY TORRENT FROM ALL SITES ALL-OVER
+            THE GLOBE</strong
+          >
+        </p>
+        <a
+          target="_blank"
+          href="{% url 'torrentapp:home' %}"
+          class="btn btn-outline-white btn-lg"
+          >SHOW ALL MOVIES <i class="fas fa-th-list"></i>
+        </a>
+        <a
+          target="_blank"
+          href="{% url 'torrentapp:browse' %}"
+          class="btn btn-outline-white btn-lg"
+          >BROWSE MOVIES <i class="fas fa-search"></i>
+        </a>
+      </div>
+    </section>
+    {% if request.GET.q %}
+
+    <br />
+    <h1>Search results</h1>
+    <div class="row mb-4 wow fadeIn">
+      {% for most in view %}
+
+      <div class="col-lg-3 col-md-6 mb-3">
+        <!--Card-->
+        <div class="card">
+          <!--Card image-->
+          <div class="view overlay">
+            <img
+              src="{{ most.image.url }}"
+              class="card-img-top"
+              style="height: 380px"
+            />
+
+            <a href="" target="_blank">
+              <div class="mask rgba-white-slight"></div>
+            </a>
+          </div>
+
+          <!--Card content-->
+          <div class="card-body">
+            <!--Title-->
+            <h4 class="card-title">{{ most.name }}</h4>
+            <!--Text-->
+            <p class="card-text">{{most.desc}}</p>
+            <a
+              href="{% url 'torrentapp:detail' most.slug %}"
+              target="_blank"
+              class="btn btn-primary btn-md"
+              >Download
+              <i class="fas fa-play ml-2"></i>
+            </a>
+          </div>
+        </div>
+        <!--/.Card-->
+      </div>
+      <!--Grid column-->
+      {% endfor %}
+    </div>
+    {% endif %} {% if not request.GET.q %}
+
+    <br />
+    <h1>The MOST WATCHED MOVIES</h1>
+    <div class="row mb-4 wow fadeIn">
+      {% for most in mostmovie %}
+
+      <div class="col-lg-3 col-md-6 mb-3">
+        <!--Card-->
+        <div class="card">
+          <!--Card image-->
+          <div class="view overlay">
+            <img
+              src="{{ most.image.url }}"
+              class="card-img-top"
+              style="height: 380px"
+            />
+
+            <a href="" target="_blank">
+              <div class="mask rgba-white-slight"></div>
+            </a>
+          </div>
+
+          <!--Card content-->
+          <div class="card-body">
+            <!--Title-->
+            <h4 class="card-title">{{ most.name }}</h4>
+            <!--Text-->
+            <p class="card-text">{{most.desc}}</p>
+            <a
+              href="{% url 'torrentapp:detail' most.slug %}"
+              target="_blank"
+              class="btn btn-primary btn-md"
+              >Download
+              <i class="fas fa-play ml-2"></i>
+            </a>
+          </div>
+        </div>
+        <!--/.Card-->
+      </div>
+      <!--Grid column-->
+      {% endfor %}
+    </div>
+    <h1>NEW MOVIES</h1>
+    <div class="row mb-4 wow fadeIn">
+      {% for new in newmovie %}
+
+      <div class="col-lg-3 col-md-6 mb-3">
+        <!--Card-->
+        <div class="card">
+          <!--Card image-->
+          <div class="view overlay">
+            <img
+              src="{{ new.image.url }}"
+              class="card-img-top"
+              style="height: 380px"
+            />
+
+            <a href="" target="_blank">
+              <div class="mask rgba-white-slight"></div>
+            </a>
+          </div>
+
+          <!--Card content-->
+          <div class="card-body">
+            <!--Title-->
+            <h4 class="card-title">{{ new.name }}</h4>
+            <!--Text-->
+            <p class="card-text">{{new.desc}}</p>
+            <a
+              href="{% url 'torrentapp:detail' new.slug %}"
+              target="_blank"
+              class="btn btn-primary btn-md"
+              >Download
+              <i class="fas fa-play ml-2"></i>
+            </a>
+          </div>
+        </div>
+        <!--/.Card-->
+      </div>
+      <!--Grid column-->
+      {% endfor %}
+    </div>
+
+    <h1>NEWLY ADDED</h1>
+
+    <div class="row mb-4 wow fadeIn">
+      {% for v in view %}
+
+      <div class="col-lg-3 col-md-6 mb-3">
+        <!--Card-->
+        <div class="card">
+          <!--Card image-->
+          <div class="view overlay">
+            <img
+              src="{{ v.image.url }}"
+              class="card-img-top"
+              style="height: 380px"
+            />
+
+            <a href="" target="_blank">
+              <div class="mask rgba-white-slight"></div>
+            </a>
+          </div>
+
+          <!--Card content-->
+          <div class="card-body">
+            <!--Title-->
+            <h4 class="card-title">{{ v.name }}</h4>
+            <!--Text-->
+            <p class="card-text">{{v.desc}}</p>
+            <a
+              href="{% url 'torrentapp:detail' v.slug %}"
+              target="_blank"
+              class="btn btn-primary btn-md"
+              >Download
+              <i class="fas fa-play ml-2"></i>
+            </a>
+          </div>
+        </div>
+        <!--/.Card-->
+      </div>
+      <!--Grid column-->
+      {% endfor %}
+    </div>
+
+    <a
+      target="_blank"
+      href="{% url 'torrentapp:home' %}"
+      class="btn btn-outline-black btn-lg"
+      >SHOW ALL MOVIES <i class="fas fa-th-list"></i>
+    </a>
+
+    <hr />
+    <br /><br />
+    <h1>HIGH RATED MOVIES</h1>
+
+    <div class="row mb-4 wow fadeIn">
+      {% for high in highmovie %}
+
+      <div class="col-lg-3 col-md-6 mb-3">
+        <!--Card-->
+        <div class="card">
+          <!--Card image-->
+          <div class="view overlay">
+            <img
+              src="{{ high.image.url }}"
+              class="card-img-top"
+              style="height: 380px"
+            />
+
+            <a href="" target="_blank">
+              <div class="mask rgba-white-slight"></div>
+            </a>
+          </div>
+
+          <!--Card content-->
+          <div class="card-body">
+            <!--Title-->
+            <h4 class="card-title">{{ high.name }}</h4>
+            <!--Text-->
+            <p class="card-text">{{high.desc}}</p>
+            <a
+              href="{% url 'torrentapp:detail' high.slug %}"
+              target="_blank"
+              class="btn btn-primary btn-md"
+              >Download
+              <i class="fas fa-play ml-2"></i>
+            </a>
+          </div>
+        </div>
+        <!--/.Card-->
+      </div>
+      <!--Grid column-->
+      {% endfor %}
+    </div>
+    {% endif %} {% endblock %}
+  </div>
+</main>

@@ -1,0 +1,498 @@
+{% extends "base.html" %} {% block content %} {% load static %}
+<style>
+#stars{
+  color:orange;
+}
+</style>
+<div class="container mt-5 mb-5">
+  <div class="card">
+    <div class="card-body px-lg-5 pt-0">
+      <br /><br />
+      <div class="row">
+        <div class="col-md-6">
+          <a href="http://www.facebook.com/share.php?u={{request.build_absolute_uri}}&title={{moviedetail}}">
+            <img src="{% static "img/fb.png" %}" height="30px"></a>
+          <a href="http://twitter.com/share?text={{moviedetail}}&url={{request.build_absolute_uri}}" >
+            <img src="{% static "img/tw.png" %}" height="38px"></a >
+
+          <img src="{{moviedetail.image.url}}" alt="" class="card-img-top hoverable"/>
+        </div>
+        <div class="col-md-6">
+          {% if moviedetail.highrated %}
+
+          <span class="badge green mr-1" style="background-color: green; color: white">HIGH RATED</span >
+          {% endif %} {% if moviedetail.new %}
+
+          <span
+            class="badge green mr-1"
+            style="background-color: blue; color: white"
+            >NEW</span
+          >
+          {% endif %} {% if moviedetail.mostwatch %}
+
+          <span
+            class="badge green mr-1"
+            style="background-color: red; color: white"
+            >MOST WATCH</span
+          >
+          {% endif %}
+          <h1>{{moviedetail}} ({{moviedetail.year}})</h1>
+
+          <a href="{{ moviedetail.torrent.url }}" class="btn btn-primary btn-md"
+            ><h3>download movie torrent <i class="fas fa-download ml-2"></i></h3
+          ></a>
+          <hr />
+          <h3>rate movie <div id="allstars">
+          {% if rating.stars %}
+          {% if rating.stars == 1 %}
+          <i id="stars" valuestars="1" class="fas fa-star"></i>
+          <i id="stars" valuestars="2" class="far fa-star"></i>
+          <i id="stars" valuestars="3" class="far fa-star"></i>
+          <i id="stars" valuestars="4" class="far fa-star"></i>
+          <i id="stars" valuestars="5" class="far fa-star"></i>
+          {% elif rating.stars == 2 %}
+          <i id="stars" valuestars="1" class="fas fa-star"></i>
+          <i id="stars" valuestars="2" class="fas fa-star"></i>
+          <i id="stars" valuestars="3" class="far fa-star"></i>
+          <i id="stars" valuestars="4" class="far fa-star"></i>
+          <i id="stars" valuestars="5" class="far fa-star"></i>
+          {% elif rating.stars == 3 %} 
+          <i id="stars" valuestars="1" class="fas fa-star"></i>
+          <i id="stars" valuestars="2" class="fas fa-star"></i>
+          <i id="stars" valuestars="3" class="fas fa-star"></i>
+          <i id="stars" valuestars="4" class="far fa-star"></i>
+          <i id="stars" valuestars="5" class="far fa-star"></i>
+          {% elif rating.stars == 4 %}
+          <i id="stars" valuestars="1" class="fas fa-star"></i>
+          <i id="stars" valuestars="2" class="fas fa-star"></i>
+          <i id="stars" valuestars="3" class="fas fa-star"></i>
+          <i id="stars" valuestars="4" class="fas fa-star"></i>
+          <i id="stars" valuestars="5" class="far fa-star"></i>
+          {% elif rating.stars == 5 %}
+          <i id="stars" valuestars="1" class="fas fa-star"></i>
+          <i id="stars" valuestars="2" class="fas fa-star"></i>
+          <i id="stars" valuestars="3" class="fas fa-star"></i>
+          <i id="stars" valuestars="4" class="fas fa-star"></i>
+          <i id="stars" valuestars="5" class="fas fa-star"></i>
+          {% endif %}
+          {% else %}
+          <i id="stars" valuestars="1" class="far fa-star"></i>
+          <i id="stars" valuestars="2" class="far fa-star"></i>
+          <i id="stars" valuestars="3" class="far fa-star"></i>
+          <i id="stars" valuestars="4" class="far fa-star"></i>
+          <i id="stars" valuestars="5" class="far fa-star"></i>
+          {% endif %}</div><span id="nom_and_avg">rated {{moviedetail.avg_of_rating|floatformat:1}} stars by {{moviedetail.no_of_rating}} users</span></h3>
+<hr>
+
+
+          <form
+            id="like_movie"
+            action="{% url 'torrentapp:like_json_movie' %}"
+            like-count="{{total_likes}}"
+            value="{{ moviedetail.id }}"
+            name="{{moviedetail.slug}}"
+            method="POST"
+          >
+            {% csrf_token %} {% if user.is_authenticated %} {% if liked %}
+            <button
+              type="submit"
+              name="id"
+              id="movie_id"
+              value="{{ moviedetail.id }}"
+              class="btn btn-danger btn-sm"
+            >
+              Unlike json
+            </button>
+            {% else %}
+            <button
+              type="submit"
+              name="id"
+              id="movie_id"
+              value="{{ moviedetail.id }}"
+              class="btn btn-primary btn-sm"
+            >
+              Like json
+            </button>
+            {% endif %} {% else %}
+            <small>must be logged in</small>
+            {% endif %}
+            <span
+              class="badge green mr-1"
+              id="spanlikesform"
+              style="background-color: green; color: white"
+            >
+              {{total_likes}} LIKES</span
+            >
+          </form>
+          {% if user.is_authenticated %} {% if liked %}
+          <button id="likeapi" class="btn btn-danger btn-sm">Unlikeapi</button>
+          {% else %}
+
+          <button id="likeapi" class="btn btn-primary btn-sm">Likeapi</button>
+          {% endif %} {% else %}
+          <small>must be logged in</small>
+          {% endif %}
+          <span
+            class="badge green mr-1"
+            id="spanlikesdivapi"
+            style="background-color: green; color: white"
+          >
+            <div id="spanlikesdiv">{{total_likes}} LIKES</div></span
+          >
+          <br />
+
+          {% if user.is_authenticated %} {% if liked %}
+          <input
+            type="button"
+            id="like"
+            name="{{ moviedetail.id }}"
+            class="btn btn-danger btn-sm"
+            value="Unlike"
+          />
+          {% else %}
+
+          <input
+            type="button"
+            id="like"
+            name="{{ moviedetail.id }}"
+            class="btn btn-primary btn-sm"
+            value="Like"
+          />
+          {% endif %} {% else %}
+          <small>must be logged in</small>
+          {% endif %}
+          <span
+            class="badge green mr-1"
+            id="spanlikes"
+            style="background-color: green; color: white"
+          >
+            <div id="spanlikesdiv">{{total_likes}} LIKES</div></span
+          >
+
+          <hr />
+          <br />
+          <h2>{{moviedetail.description}}</h2>
+          <hr />
+          <h5>added by</h5>
+          {% if user.username == moviedetail.user.username %}
+          <a href="{% url 'torrentapp:profile' moviedetail.user.username %}"
+            ><h3>{{moviedetail.user.username}}</h3></a
+          >
+          {% else %}
+          <h3>{{moviedetail.user.username}}</h3>
+          {% endif %}
+          <hr />
+          <p>{{moviedetail.date}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <h1>Comment...</h1>
+    <br />
+    {% if not moviedetail.comments.all %}
+
+    <h4>
+      No comments yet..<br />
+      <a href="{% url 'torrentapp:addcomment' moviedetail.id %}">add one</a>
+      <div class="container">
+        <div class="card">
+          <div class="card-body px-lg-5 pt-0">
+            <br />
+            <h1>ADD COMMENT</h1>
+            <form method="POST" id="formcomment" action="{% url 'torrentapp:addcomment' moviedetail.id %}">
+              {% csrf_token %} {{ form.as_p }}
+              <button
+                type="submit"
+                id="formsubmit"
+                class="btn btn-primary btn-md"
+              >
+                Add comment
+              </button>
+            </form>
+          </div>
+        </div>
+        <br>
+              <div id="results"></div>
+
+      </div>
+    </h4>
+    {% else %}
+    <h4>
+      <br />
+      <a href="{% url 'torrentapp:addcomment' moviedetail.id %}">add one</a>
+      <div class="container">
+        <div class="card">
+          <div class="card-body px-lg-5 pt-0">
+            <br />
+            <h1>ADD COMMENT</h1>
+            <form method="POST" id="formcomment"action="{% url 'torrentapp:addcomment' moviedetail.id %}">
+              {% csrf_token %} {{form.as_p}}
+              <button
+                type="submit"
+                id="formsubmit"
+                class="btn btn-primary btn-md"
+              >
+                Add comment
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </h4>
+    <br />
+    <div class="container">
+      <div id="results"></div>
+      {% for comment in moviedetail.comments.all %}
+      <div class="row">
+        <div class="col-6">
+          <div class="row">
+            <div class="col-2">
+              <img
+                src="{{ comment.user.userprofile.picture.url }}"
+                class="rounded-circle"
+                height="75px"
+                width="75px"
+              />
+            </div>
+            <div class="col-4">
+              <p>{{ comment.user.username }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-6">
+          <h3>{{comment.body}}</h3>
+          <p>{{ comment.date }}</p>
+        </div>
+      </div>
+      <hr />
+      {% endfor %} {% endif %}
+    </div>
+  </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+
+
+<script type="text/javascript">
+
+
+          function resetStars(){
+                      var i ;
+      var stars= document.querySelectorAll("#stars")
+          for(i=0 ;stars.length;i++){
+            if(i==5){break}
+              stars[i].className= "far fa-star";
+
+          } }
+          function rateMovie(res){
+                      var i ;
+      var stars= document.querySelectorAll("#stars")
+          for(i=0 ;stars.length;i++){
+            if (i == res) { break; }
+              stars[i].className = "fas fa-star";
+
+          } }
+
+  $(document).ready(function () {
+    $("[id=stars]").click(function (event) {
+      event.preventDefault();
+      var allstars = document.getElementById("allstars");
+      var span = document.getElementById("nom_and_avg");
+      var stars= document.querySelectorAll("#stars")
+      $.ajax({
+        type: "POST", // define the type of HTTP verb we want to use (POST for our form)
+        url: "{% url 'torrentapp:ratemovie' moviedetail.id %}", // the url where we want to POST
+        data: {stars:$(this).attr("valuestars"),
+          csrfmiddlewaretoken: "{{ csrf_token }}"},
+
+        success: function (response) {
+          resetStars()
+          console.log(response.stars)
+
+          rateMovie(response.stars)
+          span.innerHTML=`rated ${response.avg} stars by ${response.nom} users`
+          }       
+        ,
+        error: function (error) {
+          console.log(error);
+        }, // what type of data do we expect back from the server
+      });
+    });
+  });
+
+
+
+
+
+</script>
+
+
+
+
+<script type="text/javascript">
+  $(document).ready(function () {
+    $("#formcomment").submit(function (event) {
+      event.preventDefault();
+      var results = document.getElementById("results");
+
+      $.ajax({
+        type: "POST", // define the type of HTTP verb we want to use (POST for our form)
+        url: "{% url 'torrentapp:addcommentjson' moviedetail.id %}", // the url where we want to POST
+        data: $(this).serialize(),
+        dataType: "json",
+
+        success: function (response) {
+          console.log(response.image);
+
+          $("#formcomment")[0].reset();
+
+          results.innerHTML += `<div style="background-color:#AEFFB3;border-radius: 25px;">
+<div class="row" >
+         <div class="col-6">
+            <div class="row">
+              <div class="col-2">
+                <img
+                  src="${response.image}"
+                  class="rounded-circle"
+                  height="75px"
+                  width="75px"
+                />
+              </div>
+              <div class="col-4">
+                <p>${response.user}</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <h3>${response.body}</h3>
+            <p>${response.date}</p>
+          </div>
+        </div>
+</div>
+<hr/>
+
+`;
+        },
+        error: function (error) {
+          console.log(error);
+        }, // what type of data do we expect back from the server
+      });
+    });
+  });
+</script>
+
+<script type="text/javascript">
+
+  $(document).ready(function () {
+    $("#like_movie").submit(function (event) {
+      event.preventDefault();
+
+      var button = document.getElementById("movie_id");
+      var count = document.getElementById("spanlikesform");
+
+      $.ajax({
+        type: "POST", // define the type of HTTP verb we want to use (POST for our form)
+        url: "{% url 'torrentapp:like_json_movie' %}", // the url where we want to POST
+        data: {
+          id: $(this).attr("value"),
+          csrfmiddlewaretoken: "{{ csrf_token }}",
+        },
+        dataType: "json",
+
+        success: function (response) {
+          if (response.liked === true) {
+            button.className = "btn btn-danger btn-sm";
+            button.innerHTML = "unlike json";
+            count.innerHTML = response.totalLikes + " likes";
+            console.log("liked", response.totalLikes);
+          } else {
+            button.className = "b4tn btn-primary btn-sm";
+            button.innerHTML = "like json";
+            count.innerHTML = response.totalLikes + " likes";
+
+            console.log("unliked", response.totalLikes);
+          }
+        },
+        error: function (error) {
+          console.log(error);
+        }, // what type of data do we expect back from the server
+      });
+    });
+  });
+</script>
+
+<script type="text/javascript">
+  $(document).ready(function () {
+    $("#likeapi").click(function (event) {
+      event.preventDefault();
+      var button = document.getElementById("likeapi");
+      var count = document.getElementById("spanlikesdivapi");
+
+      $.ajax({
+        type: "GET", // define the type of HTTP verb we want to use (POST for our form)
+        url: "{% url 'torrentapp:like_api_movie' moviedetail.slug %}", // the url where we want to POST
+        data: {},
+        dataType: "json",
+
+        success: function (response) {
+          if (response.liked === true) {
+            button.className = "btn btn-danger btn-sm";
+            button.innerHTML = "unlike";
+            count.innerHTML = response.totalLikes + " likes";
+            console.log("liked", response.totalLikes);
+          } else {
+            button.className = "btn btn-primary btn-sm";
+            button.innerHTML = "like";
+            count.innerHTML = response.totalLikes + " likes";
+
+            console.log("unliked", response.totalLikes);
+          }
+        },
+        error: function (error) {
+          console.log(error);
+        }, // what type of data do we expect back from the server
+      });
+    });
+  });
+</script>
+<script type="text/javascript">
+  $(document).ready(function () {
+    $("#like").click(function (event) {
+      event.preventDefault();
+      var button = document.getElementById("like");
+      var count = document.getElementById("spanlikesdiv");
+
+      $.ajax({
+        type: "POST", // define the type of HTTP verb we want to use (POST for our form)
+        url: "{% url 'torrentapp:like_json_movie' %}", // the url where we want to POST
+        data: {
+          id: $(this).attr("name"),
+          csrfmiddlewaretoken: "{{ csrf_token }}",
+        },
+        dataType: "json",
+
+        success: function (response) {
+          if (response.liked === true) {
+            button.className = "btn btn-danger btn-sm";
+            button.value = "unlike";
+            count.innerHTML = response.totalLikes + " likes";
+            console.log("liked", response.totalLikes);
+          } else {
+            button.className = "btn btn-primary btn-sm";
+            button.value = "like";
+            count.innerHTML = response.totalLikes + " likes";
+
+            console.log("unliked", response.totalLikes);
+          }
+        },
+        error: function (error) {
+          console.log(error);
+        }, // what type of data do we expect back from the server
+      });
+    });
+  });
+</script>
+
+{% endblock %}
