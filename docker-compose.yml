@@ -58,6 +58,8 @@ services:
 
   celery:
     build: .
+    volumes:
+      - .:/app
     entrypoint: /app/entrypoint.sh
     command: celery -A torrent worker --loglevel=info #--uidn = myuser
     environment:
