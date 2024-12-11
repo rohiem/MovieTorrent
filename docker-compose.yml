@@ -32,16 +32,16 @@ services:
       - "80:80"
     depends_on:
       - web
-  frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile-react
-    volumes:
-      - ./react:/app
-    ports:
-      - "3000:3000"
-    depends_on:
-      - web
+  # frontend:
+  #    build:
+  #      context: .
+  #      dockerfile: Dockerfile-react
+  #    volumes:
+  #      - ./react:/app
+  #    ports:
+  #      - "3000:3000"
+  #    depends_on:
+  #      - web #
   redis:
     image: redis:latest
     ports:
