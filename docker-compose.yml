@@ -36,8 +36,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-react
-    volumes:
-      - ./react:/app
     ports:
       - "3000:3000"
     depends_on:
