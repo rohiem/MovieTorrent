@@ -132,6 +132,7 @@ WSGI_APPLICATION = 'torrent.wsgi.application'
 #
 
 
+"""
 
 DATABASES = {
     'default': {
@@ -153,7 +154,6 @@ DATABASES = {
         'PORT': '5432',
     }
 }
-"""
 
 
 
